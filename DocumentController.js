@@ -296,6 +296,19 @@
 
         }
 
+        function uploadStatusAlert(data) {
+            setScopes(data, function (error, response) {
+                if (error) {
+                    $rootScope.showSimpleToast("Un erreur est survenue.");
+                    return;
+                }
+                vm.hideRecto = false;
+                vm.hideVerso = false;
+                vm.hideImg = false;
+                DialogFactory.uploadStatus(ev, tplUploadSuccessUrl);
+            });
+        }
+
         /**
          *choose() : uploadFile module native function
          *call fileUploadService uploadFile API
@@ -318,16 +331,7 @@
                 data.documentType = 'recto';
             }
             fileUploadService.uploadFile(data).then(function (data) {
-                setScopes(data, function (error, response) {
-                    if (error) {
-                        $rootScope.showSimpleToast("Un erreur est survenue.");
-                        return;
-                    }
-                    vm.hideRecto = false;
-                    vm.hideVerso = false;
-                    vm.hideImg = false;
-                    DialogFactory.uploadStatus(ev, tplUploadSuccessUrl);
-                });
+                uploadStatusAlert(data);
             }).catch(function (err) {
                 console.error(err);
                 if (err === 'unexpected file') {
@@ -363,16 +367,7 @@
                         'documentType': type,
                         'nativeUri': null
                     };
-                setScopes(data, function (error, response) {
-                    if (error) {
-                        $rootScope.showSimpleToast("Un erreur est survenue.");
-                        return;
-                    }
-                    vm.hideRecto = false;
-                    vm.hideVerso = false;
-                    vm.hideImg = false;
-                    DialogFactory.uploadStatus(ev, tplUploadSuccessUrl);
-                });
+                uploadStatusAlert(data);
             });
         };
         /**
