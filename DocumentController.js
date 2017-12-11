@@ -8,32 +8,7 @@
      * @param $state
      * @param $rootScope
      */
-    function init(vm, $scope, $state, $rootScope) {
-        vm.user.document = {};
-        vm.user.document.cin = {};
-        vm.user.document.pp = {};
-        vm.user.document.jd = {};
-        vm.user.document.rib = {};
-
-        if ($rootScope.user.document && $rootScope.user.document.cin && $rootScope.user.document.cin.recto) {
-            vm.user.document.cin.recto = {};
-            vm.user.document.cin.recto.base64 = $rootScope.user.document.cin.recto.base64;
-        }
-
-        if ($rootScope.user.document && $rootScope.user.document.cin && $rootScope.user.document.cin.verso) {
-            vm.user.document.cin.verso = {};
-            vm.user.document.cin.verso = $rootScope.user.document.cin.verso;
-        }
-        if ($rootScope.user.document.jd.base64) {
-            vm.user.document.jd = $rootScope.user.document.jd;
-        }
-        if ($rootScope.user.document.rib.base64) {
-            vm.user.document.rib = $rootScope.user.document.rib;
-        }
-        if ($rootScope.user.document.pp.base64) {
-            vm.user.document.pp = $rootScope.user.document.pp;
-        }
-
+    function assignTitle() {
         switch ($state.current.name) {
             case 'escrow.piece_identite':
                 $scope.$parent.title = "Pièce d'identité";
@@ -62,6 +37,34 @@
             default:
                 $scope.$parent.title = "Mes documents";
         }
+    }
+
+    function init(vm, $scope, $state, $rootScope) {
+        vm.user.document = {};
+        vm.user.document.cin = {};
+        vm.user.document.pp = {};
+        vm.user.document.jd = {};
+        vm.user.document.rib = {};
+
+        if ($rootScope.user.document && $rootScope.user.document.cin && $rootScope.user.document.cin.recto) {
+            vm.user.document.cin.recto = {};
+            vm.user.document.cin.recto.base64 = $rootScope.user.document.cin.recto.base64;
+        }
+
+        if ($rootScope.user.document && $rootScope.user.document.cin && $rootScope.user.document.cin.verso) {
+            vm.user.document.cin.verso = {};
+            vm.user.document.cin.verso = $rootScope.user.document.cin.verso;
+        }
+        if ($rootScope.user.document.jd.base64) {
+            vm.user.document.jd = $rootScope.user.document.jd;
+        }
+        if ($rootScope.user.document.rib.base64) {
+            vm.user.document.rib = $rootScope.user.document.rib;
+        }
+        if ($rootScope.user.document.pp.base64) {
+            vm.user.document.pp = $rootScope.user.document.pp;
+        }
+        assignTitle();
     }
 
     app.controller('DocumentController', ['$scope', '$rootScope', '$mdDialog', '$mdToast', '$parse', 'DocumentService', '$mdMedia', '$state', '$timeout', '$ionicModal', 'base64ToBinService', 'cameraService', 'fileUploadService', 'DialogFactory', '$cordovaActionSheet', function ($scope, $rootScope, $mdDialog, $mdToast, $parse, DocumentService, $mdMedia, $state, $timeout, $ionicModal, base64ToBinService, cameraService, fileUploadService, DialogFactory, $cordovaActionSheet) {
@@ -188,18 +191,7 @@
             return false;
         };
 
-        $scope.suppDialog = function (event, docType) {
-            var title;
-            switch ($state.current.url) {
-                case "/piece_identite":
-                    title = "Pièce d'identité";
-                    break;
-                case "/justificatif_domiile":
-                    title = "Justificatif de domicile"
-                    break;
-                case "/identite_bancaire":
-                    title = "Rélevé d'identité bancaire"
-            }
+        function handleConfDialog(event, docType, title) {
             var confirm = $mdDialog.confirm()
                 .title(title)
                 .textContent('Voulez-vous vraiment supprimer ce document?')
@@ -239,6 +231,21 @@
             }, function () {
             });
             //DialogFactory.confirm(event, 'DocumentController');
+        }
+
+        $scope.suppDialog = function (event, docType) {
+            var title;
+            switch ($state.current.url) {
+                case "/piece_identite":
+                    title = "Pièce d'identité";
+                    break;
+                case "/justificatif_domiile":
+                    title = "Justificatif de domicile"
+                    break;
+                case "/identite_bancaire":
+                    title = "Rélevé d'identité bancaire"
+            }
+            handleConfDialog(event, docType, title);
         };
 
         function callBaseToBinService(myPdfBase64) {
